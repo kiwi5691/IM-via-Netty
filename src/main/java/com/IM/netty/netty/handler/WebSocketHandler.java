@@ -1,4 +1,4 @@
-package com.IM.netty.netty;
+package com.IM.netty.netty.handler;
 
 import com.IM.netty.config.NettyConfig;
 import com.IM.netty.model.WsMessage;

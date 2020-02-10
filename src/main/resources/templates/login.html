@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>登录</title>
+    <meta name="viewport"  charset="UTF-8" content="width=device-width, initial-scale=1.0">
+     <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<style>
+    .middle {
+        float: none;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .divFooter {
+        position:fixed;
+        bottom:0;
+        width:83.5%;
+        text-align:center;
+    }
+</style>
+<body>
+
+<div class="container">
+       <div class="nav flex-column justify-content-center bg-light text-center text-success" style="height:200px;">
+       <h1>请输入用户名！</h1>
+       </div>
+     </div>
+<div th:if="${hide}" class="col-md-2 col-md-offset-5 alert alert-warning">
+    <a href="#" class="close" data-dismiss="alert">
+        &times;
+    </a>
+    <strong>警告！</strong>账号错误。
+</div>
+<div class="row">
+    <div class="col-md-2 col-md-offset-5">
+
+    <form role="form" action="/login" method="post" >
+    <div class="form-group">
+        <label for="name">名称</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="请输入名称">
+    </div>
+    <button type="submit" class="btn btn-default">提交</button>
+
+</form>
+    </div>
+</div>
+    <div class="divFooter">
+        <p>这里是websocket的测试网页</p>
+    </div>
+
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

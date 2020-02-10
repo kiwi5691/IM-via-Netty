@@ -1,38 +1,25 @@
 package com.IM.netty;
 
-import com.IM.netty.config.NettyConfig;
-import com.IM.netty.netty.ServerBootStrap;
-import io.netty.channel.ChannelFuture;
+import com.IM.netty.utils.SpringUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 import java.net.InetSocketAddress;
 
 @Slf4j
-@SpringBootApplication
-public class IMApplication implements CommandLineRunner {
+@SpringBootApplication(scanBasePackages = {"com.IM.netty"})
+public class IMApplication  {
 
-    @Autowired
-    private ServerBootStrap ws;
+
+    @Bean
+    public SpringUtil getSpringUtil() {
+        return new SpringUtil();
+    }
+
+
     public static void main(String[] args) {
         SpringApplication.run(IMApplication.class, args);
-    }
-    @Override
-    public void run(String... args) throws Exception {
-        log.info("Netty's ws server is listen: " + NettyConfig.WS_PORT);
-        InetSocketAddress address = new InetSocketAddress(NettyConfig.WS_HOST, NettyConfig.WS_PORT);
-        ChannelFuture future = ws.start(address);
-
-        Runtime.getRuntime().addShutdownHook(new Thread(){
-            @Override
-            public void run() {
-                ws.destroy();
-            }
-        });
-
-        future.channel().closeFuture().syncUninterruptibly();
     }
 }
