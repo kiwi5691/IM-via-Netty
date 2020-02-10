@@ -12,8 +12,8 @@ public class MutilAsyncService {
 
     public void save(Object user,Object msg){
         UserMsg userMsg = new UserMsg();
-        userMsg.setName(String.valueOf(user));
-        userMsg.setMsg(String.valueOf(msg));
+//        userMsg.setName(String.valueOf(user));
+//        userMsg.setMsg(String.valueOf(msg));
         userMsgsAsyncSets.add(userMsg);
     }
 

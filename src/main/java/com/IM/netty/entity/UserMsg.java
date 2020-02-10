@@ -27,12 +27,22 @@ public class UserMsg extends BaseModel implements Serializable  {
     private Long id;
 
     @Basic
-    @Column(name = "name")
-    private String name;
+    @Column(name = "send_id")
+    private Integer sendId;
+
+    @Basic
+    @Column(name = "accept_id")
+    private Integer acceptId;
 
     @Basic
     @Column(name = "msg")
-    private String msg;
+    private Integer msg;
+
+    @Basic
+    @Column(name = "is_sign")
+    private Integer isSign;
+
+
 
 
 

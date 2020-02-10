@@ -4,6 +4,7 @@ import com.IM.netty.dao.UserRepository;
 import com.IM.netty.entity.User;
 import com.IM.netty.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class UserServiceImpl  implements UserService {
     @Autowired
     private UserRepository userRepository;
     @Override
+    @Cacheable(cacheNames = {"user"})
     public List<User> listUsers() {
         Iterable<User> userIterable = userRepository.findAll();
         List<User> users = new ArrayList<>();

@@ -1,5 +1,6 @@
 package com.IM.netty.controller.view;
 
+import com.IM.netty.cache.UserStatusCacheMap;
 import com.IM.netty.entity.User;
 import com.IM.netty.entity.UserGroups;
 import com.IM.netty.service.UserGroupsService;
@@ -14,13 +15,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
-public class PageController {
+public class LoginController {
 
+    @Autowired
+    private HttpSession session;
 
     @Autowired
     private UserService userService;
@@ -49,8 +53,11 @@ public class PageController {
             if(userGroups.isPresent()){
                 users = userGroupsService.getFriendDetails(userGroups.get());
             }
-            users.forEach( user1 -> log.info(user1.toString()));
-//            model.addAttribute("hide",true);
+            //存放好友记录
+            UserStatusCacheMap.saveFriendLists(user.getId(),users);
+            //存放当前session
+            session.setAttribute("currentId",user.getId());
+            model.addAttribute("users",users);
         }else{
             model.addAttribute("hide",true);
             return "login";
