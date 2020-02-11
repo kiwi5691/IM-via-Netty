@@ -2,6 +2,8 @@ package com.IM.netty.controller.view;
 
 import com.IM.netty.cache.UserStatusCacheMap;
 import com.IM.netty.entity.User;
+import com.IM.netty.model.dto.UserDTO;
+import com.IM.netty.service.UserMsgService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +15,8 @@ import java.util.*;
 @Controller
 public class ChatController {
 
+    @Autowired
+    private UserMsgService userMsgService;
     @Autowired
     private HttpSession session;
 
@@ -48,10 +52,10 @@ public class ChatController {
         Optional<Set<User>> optionalUsers = Optional.ofNullable(UserStatusCacheMap.getFriendLists(Integer.parseInt(id.toString())));
         if(optionalUsers.isPresent()) {
             Map<String,Object> map = getFirstOne(optionalUsers.get());
-            model.addAttribute("users", optionalUsers.get());
+            List<UserDTO> userDTOList = userMsgService.getUserMsgDTO(optionalUsers.get(),Integer.parseInt(id.toString()),optionalUsers);
+            model.addAttribute("users", userDTOList);
             model.addAttribute("fNickName", map.get("fNickName"));
             model.addAttribute("fId", map.get("fId"));
-
 
             return "chatting";
         }

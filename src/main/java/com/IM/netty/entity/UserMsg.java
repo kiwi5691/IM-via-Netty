@@ -36,7 +36,7 @@ public class UserMsg extends BaseModel implements Serializable  {
 
     @Basic
     @Column(name = "msg")
-    private Integer msg;
+    private String msg;
 
     @Basic
     @Column(name = "is_sign")

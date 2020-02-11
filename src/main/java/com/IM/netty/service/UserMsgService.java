@@ -1,10 +1,14 @@
 package com.IM.netty.service;
 
+import com.IM.netty.entity.User;
 import com.IM.netty.entity.UserMsg;
+import com.IM.netty.model.dto.UserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author kiwi
@@ -17,4 +21,6 @@ public interface UserMsgService {
     int insert(UserMsg userMsg);
     void deletes(List<String> ids);
     void delete(Long id);
+    List<UserDTO> getUserMsgDTO(Set<User> users, Integer userId, Optional<Set<User>> userFriends);
+    List<UserMsg> getUserMsgById(Integer id);
 }
