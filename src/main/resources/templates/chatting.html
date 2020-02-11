@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>好友列表</title>
+    <title>列表列表</title>
 
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600" rel="stylesheet">
     <link rel="stylesheet" href="css/reset.min.css">
@@ -35,9 +35,9 @@
         </div>
         <div class="right">
             <div class="top">
-                <span>To: <span class="name" th:text="${fNickName}"></span></span></div>
+                <span>To: <span class="name" th:text="${fNickName}" ></span></span></div>
             <div th:each="user : ${users}" class="chat" th:attr="data-chat='person'+${user.id}">
-                <div class="conversation-start">
+                <div th:attr="id='id:'+${user.id}" class="conversation-start">
                     <span th:text="${#dates.format(user.lastChatTime,'yyyy-MM-dd HH:mm:ss')}"></span>
                 </div>
                 <div th:each="usermsg:${user.userMsgs}" class="bubble you" th:attr="class='bubble '+${usermsg.sendId!=session.currentId?'you':'me'}">
@@ -45,10 +45,10 @@
                 </div>
             </div>
             <div class="write">
-                <a href="javascript:;" class="write-link attach"></a>
-                <input type="text" />
-                <a href="javascript:;" class="write-link smiley"></a>
-                <a href="javascript:;" class="write-link send"></a>
+                <a  class="write-link attach"></a>
+                <input id="msg" type="text" />
+                <a  class="write-link smiley"></a>
+                <a  id="send" href="javascript:void(0);" onclick="sendMsg()" class="write-link send"></a>
             </div>
         </div>
     </div>
@@ -88,6 +88,62 @@
         chat.name.innerHTML = friends.name;
     }
 </script>
+<script th:inline="javascript" type="text/javascript">
 
+    function sendMsg(){
+        var msg_text_val = document.getElementById("msg").value;
+        if (msg_text_val.length === 0) {
+            return;
+        }
+
+        var personId = document.getElementsByClassName('person active')[0].getAttribute("data-chat");
+        //当前输入框id
+        var id =personId.substr(5,personId.length);
+
+        appendMsg(msg_text_val);
+
+        // alert("fuck"+personId.substr(5,personId.length));
+    }
+    function appendMsg(msg) {
+        var msgHtml = '<div class="bubble me">' +
+            msg +
+            '</div>';
+        var msg_list = document.getElementsByClassName('chat active-chat')[0];
+        msg_list.insertAdjacentHTML("beforeend", msgHtml);
+
+    }
+
+
+    <!--    -->
+//    function  ws_init(){
+//        var target="ws://localhost:8080/MyAcitivity/echo";/* 对应你的服务端程序地址 */
+//        if ('WebSocket' in window) {
+//            ws = new WebSocket(target);
+//        } else if ('MozWebSocket' in window) {
+//            ws = new MozWebSocket(target);
+//        } else {
+//            alert('WebSocket is not supported by this browser.');
+//            return;
+//        }
+//        ws.onopen=function(){
+//            console.info("webSocket通道建立成功！！！");
+//        };
+//
+//        ws.onmessage =function (event){
+//            var div=document.getElementById("getServer");
+//            div.innerHTML+=event.data;
+//        }
+//
+//    }
+//
+//    function  ws_send(){
+//        var msg = document.getElementById("msg");
+//        ws.send(msg.value);
+//        msg.value="";
+//
+//    }
+
+
+</script>
 </body>
 </html>

@@ -113,7 +113,6 @@ public class UserMsgServiceImpl implements UserMsgService {
                 userDTO.setUserMsgs(msgByFidMaps.get(userDTO.getId()));
                 userDTO.setLastChatTime(lastTimes.get(userDTO.getId()));
             });
-            userDTOList.forEach(userDTO -> log.info(userDTO.toString()));
             return userDTOList;
         }else {
             userDTOList.forEach(userDTO ->{
