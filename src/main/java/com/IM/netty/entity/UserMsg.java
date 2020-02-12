@@ -22,7 +22,7 @@ public class UserMsg extends BaseModel implements Serializable  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "snowf-id")
-    @GenericGenerator(name = "snowf-id", strategy = "com.IM.netty.utils.SnowflakeIDGenerator")
+    @GenericGenerator(name = "snowf-id", strategy = "com.IM.netty.utils.generator.SnowflakeIDGenerator")
     @Column(name = "id")
     private Long id;
 

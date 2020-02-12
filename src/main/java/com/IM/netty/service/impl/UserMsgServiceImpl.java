@@ -5,6 +5,8 @@ import com.IM.netty.dao.UserMsgRepository;
 import com.IM.netty.entity.User;
 import com.IM.netty.entity.UserGroups;
 import com.IM.netty.entity.UserMsg;
+import com.IM.netty.enums.MsgSignFlagEnum;
+import com.IM.netty.model.dto.ChatMsg;
 import com.IM.netty.model.dto.UserDTO;
 import com.IM.netty.service.UserMsgService;
 import com.IM.netty.utils.DtoUtils;
@@ -51,11 +53,15 @@ public class UserMsgServiceImpl implements UserMsgService {
     }
 
     @Override
-    @Cacheable(value = "user-Msg",key = "#result.id", unless = "#result eq null")
-    public int insert(UserMsg userMsg) {
-        //TODO VO
-        userMsgRepository.save(userMsg);
-        return 0;
+    public Long insert(ChatMsg chatMsg) {
+        UserMsg userMsg = new UserMsg();
+        userMsg.setMsg(chatMsg.getMsg());
+        userMsg.setAcceptId(Integer.parseInt(chatMsg.getReceiverId()));
+        userMsg.setSendId(Integer.parseInt(chatMsg.getSenderId()));
+        userMsg.setIsSign(MsgSignFlagEnum.unsign.type);
+        userMsg = userMsgRepository.save(userMsg);
+
+        return userMsg.getId();
     }
 
 

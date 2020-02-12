@@ -78,6 +78,8 @@
     });
 
     function setAciveChat(f) {
+        // console.log("关闭webSocket");
+        // CHAT.wsclose();
         friends.list.querySelector('.active').classList.remove('active');
         f.classList.add('active');
         chat.current = chat.container.querySelector('.active-chat');
@@ -86,6 +88,8 @@
         chat.container.querySelector('[data-chat="' + chat.person + '"]').classList.add('active-chat');
         friends.name = f.querySelector('.name').innerText;
         chat.name.innerHTML = friends.name;
+        CHAT.init();
+        console.log("建立websockt");
     }
 </script>
 <script th:inline="javascript" type="text/javascript">
@@ -98,12 +102,42 @@
 
         var personId = document.getElementsByClassName('person active')[0].getAttribute("data-chat");
         //当前输入框id
-        var id =personId.substr(5,personId.length);
+        var fId =personId.substr(6,personId.length);
 
         appendMsg(msg_text_val);
 
-        // alert("fuck"+personId.substr(5,personId.length));
+        // 情况消息文本框中的内容
+        msg_text_val.value = "";
+        // 发送消息完毕之后，情况input
+        document.getElementById("msg").value="";
+        var meId =[[${session.currentId}]];
+        // 构建ChatMsg
+        var chatMsg = new app.ChatMsg(meId, fId, msg_text_val, null);
+        // 构建DataContent
+        var dataContent = new app.DataContent(app.CHAT, chatMsg, null);
+        CHAT.chat( JSON.stringify(dataContent));
+
     }
+
+    function receiveMsg(msg,sendId) {
+
+        var msgHtml = '<div class="bubble you">' +
+            msg +
+            '</div>';
+        var personId = document.getElementsByClassName('person active')[0].getAttribute("data-chat");
+        //当前输入框id
+        var fId =personId.substr(6,personId.length);
+
+
+        if(sendId===fId){
+            var msg_list = document.getElementsByClassName('chat active-chat')[0];
+            msg_list.insertAdjacentHTML("beforeend", msgHtml);
+        }else {
+
+        }
+    }
+
+
     function appendMsg(msg) {
         var msgHtml = '<div class="bubble me">' +
             msg +
@@ -114,36 +148,103 @@
     }
 
 
-    <!--    -->
-//    function  ws_init(){
-//        var target="ws://localhost:8080/MyAcitivity/echo";/* 对应你的服务端程序地址 */
-//        if ('WebSocket' in window) {
-//            ws = new WebSocket(target);
-//        } else if ('MozWebSocket' in window) {
-//            ws = new MozWebSocket(target);
-//        } else {
-//            alert('WebSocket is not supported by this browser.');
-//            return;
-//        }
-//        ws.onopen=function(){
-//            console.info("webSocket通道建立成功！！！");
-//        };
-//
-//        ws.onmessage =function (event){
-//            var div=document.getElementById("getServer");
-//            div.innerHTML+=event.data;
-//        }
-//
-//    }
-//
-//    function  ws_send(){
-//        var msg = document.getElementById("msg");
-//        ws.send(msg.value);
-//        msg.value="";
-//
-//    }
+</script>
+<script type="application/javascript" src="js/app.js"></script>
+<script th:inline="javascript" type="text/javascript">
+    // 构建聊天业务CHAT
+    window.CHAT = {
+        socket: null,
+        init: function() {
+            if ("WebSocket" in window) {
+
+                // 如果当前的状态已经连接，那就不需要重复初始化websocket
+                if (CHAT.socket != null
+                    && CHAT.socket != undefined
+                    && CHAT.socket.readyState == WebSocket.OPEN) {
+                    return false;
+                }
+
+                CHAT.socket = new WebSocket("ws://localhost:8088/ws");
+                CHAT.socket.onopen = CHAT.wsopen,
+                    CHAT.socket.onclose = CHAT.wsclose,
+                    CHAT.socket.onerror = CHAT.wserror,
+                    CHAT.socket.onmessage = CHAT.wsmessage;
+
+            } else {
+                alert("浏览器不支持websocket");
+            }
+        },
+        chat: function(msg) {
+
+            // 如果当前websocket的状态是已打开，则直接发送， 否则重连
+            if (CHAT.socket != null
+                && CHAT.socket != undefined
+                && CHAT.socket.readyState == WebSocket.OPEN) {
+                CHAT.socket.send(msg);
+            } else {
+                // 重连websocket
+                CHAT.init();
+                setTimeout(CHAT.reChat(msg), "1000");
+            }
+            // 渲染快照列表进行展示
+            // loadingChatSnapshot();
+        },
+        reChat: function(msg) {
+            console.log("消息重新发送...");
+            CHAT.socket.send(msg);
+        },
+        wsopen: function() {
+            console.log("websocket连接已建立...");
+            var meId =[[${session.currentId}]];
+            // 构建ChatMsg
+            var chatMsg = new app.ChatMsg(meId, null, null, null);
+            // 构建DataContent
+            var dataContent = new app.DataContent(app.CONNECT, chatMsg, null);
+            // 发送websocket
+            CHAT.chat(JSON.stringify(dataContent));
+
+            // 每次连接之后，获取用户的未读未签收消息列表
+            // fetchUnReadMsg();
+
+            // 定时发送心跳
+            setInterval("CHAT.keepalive()", 10000);
+        },
+        wsmessage: function(e) {
+            console.log("接受到消息：" + e.data);
+
+            // 转换DataContent为对象
+            var dataContent = JSON.parse(e.data);
+            var action = dataContent.action;
 
 
+            var chatMsg = dataContent.chatMsg;
+            var msg = chatMsg.msg;
+            var friendUserId = chatMsg.senderId;
+            var myId = chatMsg.receiverId;
+            receiveMsg(msg,friendUserId);
+
+            // 接受到消息之后，对消息记录进行签收
+            var dataContentSign = new app.DataContent(app.SIGNED, null, chatMsg.msgId);
+            CHAT.chat(JSON.stringify(dataContentSign));
+        },
+        wsclose: function() {
+            console.log("连接关闭...");
+        },
+        wserror: function() {
+            console.log("发生错误...");
+        },
+
+        keepalive: function() {
+            // 构建对象
+            var dataContent = new app.DataContent(app.KEEPALIVE, null, null);
+            // 发送心跳
+            CHAT.chat(JSON.stringify(dataContent));
+
+            // // 定时执行函数
+            // fetchUnReadMsg();
+            // fetchContactList();
+        }
+    };
 </script>
 </body>
 </html>

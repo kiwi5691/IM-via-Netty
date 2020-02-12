@@ -1,4 +1,4 @@
-package com.IM.netty.utils;
+package com.IM.netty.utils.generator;
 
 import org.hibernate.MappingException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;

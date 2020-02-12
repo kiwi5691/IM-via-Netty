@@ -3,7 +3,9 @@ package com.IM.netty.netty.handler;
 import com.IM.netty.enums.MsgActionEnum;
 import com.IM.netty.model.dto.ChatMsg;
 import com.IM.netty.model.dto.DataContent;
+import com.IM.netty.service.UserMsgService;
 import com.IM.netty.utils.JsonUtils;
+import com.IM.netty.utils.SpringUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -11,7 +13,10 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.util.concurrent.GlobalEventExecutor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +26,12 @@ import java.util.List;
  * @Description: 处理消息的handler
  * TextWebSocketFrame： 在netty中，是用于为websocket专门处理文本的对象，frame是消息的载体
  */
+@Slf4j
 public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
 	public static ChannelGroup users =
 			new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-	
+
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) 
 			throws Exception {
@@ -38,6 +44,7 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 		// 1. 获取客户端发来的消息
 		DataContent dataContent = JsonUtils.jsonToPojo(content, DataContent.class);
 		Integer action = dataContent.getAction();
+		log.info("dataContent:"+dataContent.toString());
 		// 2. 判断消息类型，根据不同的类型来处理不同的业务
 
 		if (action == MsgActionEnum.CONNECT.type) {
@@ -52,15 +59,17 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 			UserChannelRel.output();
 		} else if (action == MsgActionEnum.CHAT.type) {
 			//  2.2  聊天类型的消息，把聊天记录保存到数据库，同时标记消息的签收状态[未签收]
+			// 这里的测试页面不对签收和未签收进行判断
 			ChatMsg chatMsg = dataContent.getChatMsg();
 			String msgText = chatMsg.getMsg();
 			String receiverId = chatMsg.getReceiverId();
 			String senderId = chatMsg.getSenderId();
-			
+
+			UserMsgService userMsgService = (UserMsgService) SpringUtil.getBean("userMsgService");
+
 			// 保存消息到数据库，并且标记为 未签收
-//		todo	UserService userService = (UserService)SpringUtil.getBean("userServiceImpl");
-//			String msgId = userService.saveMsg(chatMsg);
-//			chatMsg.setMsgId(msgId);
+			Long msgId = userMsgService.insert(chatMsg);
+			chatMsg.setMsgId(String.valueOf(msgId));
 			
 			DataContent dataContentMsg = new DataContent();
 			dataContentMsg.setChatMsg(chatMsg);
@@ -69,7 +78,7 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 			// 从全局用户Channel关系中获取接受方的channel
 			Channel receiverChannel = UserChannelRel.get(receiverId);
 			if (receiverChannel == null) {
-				// TODO channel为空代表用户离线，推送消息（JPush，个推，小米推送）
+				// TODO channel为空代表用户离线，推送消息
 			} else {
 				// 当receiverChannel不为空的时候，从ChannelGroup去查找对应的channel是否存在
 				Channel findChannel = users.find(receiverChannel.id());

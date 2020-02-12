@@ -15,7 +15,7 @@ public class UserServiceImpl  implements UserService {
     @Autowired
     private UserRepository userRepository;
     @Override
-    @Cacheable(cacheNames = {"user"})
+//    @Cacheable(cacheNames = {"user"})
     public List<User> listUsers() {
         Iterable<User> userIterable = userRepository.findAll();
         List<User> users = new ArrayList<>();

@@ -1,4 +1,4 @@
-package com.IM.netty.utils;
+package com.IM.netty.utils.generator;
 
 import org.apache.commons.lang3.RandomUtils;
 

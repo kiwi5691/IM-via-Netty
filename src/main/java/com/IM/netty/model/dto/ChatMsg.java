@@ -1,10 +1,14 @@
 package com.IM.netty.model.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChatMsg implements Serializable {
 
 	private static final long serialVersionUID = 3611169682695799175L;
