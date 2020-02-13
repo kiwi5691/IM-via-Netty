@@ -4,6 +4,7 @@ import com.IM.netty.entity.User;
 import com.IM.netty.entity.UserMsg;
 import com.IM.netty.model.dto.ChatMsg;
 import com.IM.netty.model.dto.UserDTO;
+import com.IM.netty.model.dto.UserInfoDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -24,4 +25,5 @@ public interface UserMsgService {
     void delete(Long id);
     List<UserDTO> getUserMsgDTO(Set<User> users, Integer userId, Optional<Set<User>> userFriends);
     List<UserMsg> getUserMsgById(Integer id);
+    List<UserInfoDTO> listUserInfo(List<UserDTO> userDTOList);
 }

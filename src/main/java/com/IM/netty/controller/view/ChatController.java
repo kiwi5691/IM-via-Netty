@@ -3,7 +3,9 @@ package com.IM.netty.controller.view;
 import com.IM.netty.cache.UserStatusCacheMap;
 import com.IM.netty.entity.User;
 import com.IM.netty.model.dto.UserDTO;
+import com.IM.netty.service.UserGroupsService;
 import com.IM.netty.service.UserMsgService;
+import com.IM.netty.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +17,6 @@ import java.util.*;
 
 @Controller
 public class ChatController {
-
     @Autowired
     private UserMsgService userMsgService;
     @Autowired

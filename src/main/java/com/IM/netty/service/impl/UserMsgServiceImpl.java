@@ -8,6 +8,7 @@ import com.IM.netty.entity.UserMsg;
 import com.IM.netty.enums.MsgSignFlagEnum;
 import com.IM.netty.model.dto.ChatMsg;
 import com.IM.netty.model.dto.UserDTO;
+import com.IM.netty.model.dto.UserInfoDTO;
 import com.IM.netty.service.UserMsgService;
 import com.IM.netty.utils.DtoUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.*;
 import javax.servlet.http.HttpSession;
@@ -133,6 +135,31 @@ public class UserMsgServiceImpl implements UserMsgService {
     public List<UserMsg> getUserMsgById(Integer id) {
         return null;
     }
+
+    @Override
+    public List<UserInfoDTO> listUserInfo(List<UserDTO> userDTOList) {
+        List<UserInfoDTO> userInfoDTOS = new ArrayList<>();
+        userDTOList.removeIf(userDTO->userDTO.getUserMsgs()==null);
+        for(UserDTO userDTO:userDTOList){
+            //取出最新的userMsg
+            Optional<UserMsg> date = userDTO.getUserMsgs().stream().filter(userMsg->userMsg.getCreateTime()!=null).max(Comparator.comparing(UserMsg::getCreateTime));
+            date.ifPresent(value -> {
+                UserInfoDTO userInfoDTO = new UserInfoDTO();
+                userInfoDTO.setAvatar(userDTO.getAvatar());
+                userInfoDTO.setId(userDTO.getId());
+                userInfoDTO.setNickname(userDTO.getNickname());
+                userInfoDTO.setLastChatTime(date.get().getCreateTime());
+                userInfoDTO.setLastChatWords(date.get().getMsg());
+                userInfoDTOS.add(userInfoDTO);
+            });
+
+        }
+        if(CollectionUtils.isEmpty(userInfoDTOS)){
+            return null;
+        }
+        return userInfoDTOS;
+    }
+
     public List<UserDTO> copyUserDTOList(Set<User> users){
         List<UserDTO> userDTOList = new ArrayList<>();
         if(users.size()==0){

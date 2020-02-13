@@ -1,5 +1,6 @@
 package com.IM.netty.service.impl;
 
+import com.IM.netty.cache.UserStatusCacheMap;
 import com.IM.netty.dao.UserGroupsRepository;
 import com.IM.netty.dao.UserRepository;
 import com.IM.netty.entity.User;
@@ -55,4 +56,5 @@ public class UserGroupsServiceImpl implements UserGroupsService {
 
         return userSets;
     }
+
 }
