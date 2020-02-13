@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpSession;
 import java.util.*;
@@ -41,7 +42,27 @@ public class ChatController {
 
     }
 
+    @GetMapping("/toChatDetail/{fid}")
+    public String toChatDetail(@PathVariable Integer fid,Model model){
+        Object id = session.getAttribute("currentId");
+        Optional<Set<User>> optionalUsers = Optional.ofNullable(UserStatusCacheMap.getFriendLists(Integer.parseInt(id.toString())));
+        if(optionalUsers.isPresent()) {
+            Map<String,Object> map = getFirstOne(optionalUsers.get());
+            List<UserDTO> userDTOList = userMsgService.getUserMsgDTO(optionalUsers.get(),Integer.parseInt(id.toString()),optionalUsers);
+            model.addAttribute("users", userDTOList);
 
+            model.addAttribute("fId", fid);
+            User user= optionalUsers.get().stream().filter(o -> o.getId().equals(fid)).findAny().orElse(null);
+            model.addAttribute("fNickName", user.getNickname());
+
+        }else {
+            model.addAttribute("users", null);
+            model.addAttribute("fId", null);
+            model.addAttribute("fNickName", null);
+
+        }
+        return "chatting";
+    }
     @GetMapping({"/chatting","/chatting.html"})
     public String getChatting(Model model) {
         Object id = session.getAttribute("currentId");

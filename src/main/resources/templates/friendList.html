@@ -38,12 +38,18 @@
                 <span>To: <span class="name" th:text="${fNickName}"></span></span></div>
             <div th:each="user : ${users}" class="chat" th:attr="data-chat='person'+${user.id}">
                 <img  style="height: 100px;width:100px;left: 30%; top: 30%;display: inline;margin: 0 auto; position: absolute; " th:src="${user.avatar}"/>
-                <button type="button"   style="height: 50px;width:100px;text-align: center;display: inline;margin: 0 auto; position: absolute; left: 30%;; top: 50%;  ">聊天</button>
+                <button type="button" th:onclick="'javascript:toChat('+${user.id}+');'"  style="height: 50px;width:100px;text-align: center;display: inline;margin: 0 auto; position: absolute; left: 30%;; top: 50%;  ">聊天</button>
             </div>
             </div>
     </div>
 </div>
 
+<script  th:inline="javascript">
+    function toChat(f) {
+        self.location="/toChatDetail/"+f;
+    }
+
+</script>
 <script  th:inline="javascript">
 
     document.querySelector('.chat[data-chat=person'+[[${fId}]]+']').classList.add('active-chat');

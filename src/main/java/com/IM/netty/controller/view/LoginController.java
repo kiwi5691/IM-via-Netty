@@ -51,16 +51,21 @@ public class LoginController {
         List<User> checkUsers = userList.stream().filter(user -> user.getNickname().equals(name)).collect(Collectors.toList());
         if(!CollectionUtils.isEmpty(checkUsers)){
             User user = checkUsers.get(0);
+
             Optional<List<UserGroups>> userGroups = Optional.ofNullable(userGroupsService.finAllFriends(user.getId()));
             Set<User> users = new HashSet<>();
             if(userGroups.isPresent()){
                 users = userGroupsService.getFriendDetails(userGroups.get());
             }
+            Map<String,Object> map = getFirstOne(users);
             //存放好友记录
             UserStatusCacheMap.saveFriendLists(user.getId(),users);
             //存放当前session
             session.setAttribute("currentId",user.getId());
             model.addAttribute("users",users);
+            model.addAttribute("fNickName", map.get("fNickName"));
+            model.addAttribute("fId", map.get("fId"));
+
         }else{
             model.addAttribute("hide",true);
             return "login";
@@ -69,4 +74,10 @@ public class LoginController {
     }
 
 
+    public Map<String,Object> getFirstOne(Set<User> userSet){
+        Map<String,Object> map = new HashMap<>();
+        map.put("fId",userSet.iterator().next().getId());
+        map.put("fNickName",userSet.iterator().next().getNickname());
+        return map;
+    }
 }
