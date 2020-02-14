@@ -28,18 +28,13 @@ public class DateTimeUtil {
         switch (cases){
             case WORDSWITHPM_AM :
                 //获取当前时间
-                LocalDateTime nowTime= LocalDateTime.now();
-                long now = nowTime.toEpochSecond(ZoneOffset.ofHours(0));
-                long nowDay = now /(60*60*24);
-                long t2 = dateTime.toEpochSecond(ZoneOffset.ofHours(0));
-                long day2 = t2/(60*60*24);
                 StringBuilder builder = new StringBuilder();
-                Integer diff = (int)(day2 - nowDay);
-                //todo 他妈 debug这个相减是 -1
+                Integer diff = getTimeDiff(dateTime);
                 if(diff<=2) {
                     dtf2 = DateTimeFormatter.ofPattern("HH:mm");
+                    strDate2 = dtf2.format(dateTime);
                     builder.append(timeBuilder(diff));
-                    builder.append(" ").append(dtf2);
+                    builder.append(" ").append(strDate2);
                     strDate2 = builder.toString();
                 }else {
                     dtf2 = DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm");
@@ -54,12 +49,23 @@ public class DateTimeUtil {
         return strDate2;
     }
 
-    public static String timeBuilder(Integer days){
+    public static Integer getTimeDiff(LocalDateTime dateTime){
+        LocalDateTime nowTime= LocalDateTime.now();
+        long now = nowTime.toEpochSecond(ZoneOffset.ofHours(0));
+        long nowDay = now /(60*60*24);
+        long t2 = dateTime.toEpochSecond(ZoneOffset.ofHours(0));
+        long day2 = t2/(60*60*24);
+        return Math.abs((int)(nowDay- day2));
+
+    }
+
+    public static  String timeBuilder(Integer days){
         switch (days){
             case 1: return "昨天";
             case 2: return "前天";
             case 0: return "今天";
             default: return " ";
         }
+
     }
 }

@@ -2,7 +2,6 @@ package com.IM.netty.cache;
 
 import com.IM.netty.entity.User;
 import io.netty.channel.Channel;
-import redis.clients.jedis.Jedis;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import java.util.HashSet;
