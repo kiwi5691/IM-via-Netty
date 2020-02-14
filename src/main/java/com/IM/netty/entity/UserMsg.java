@@ -43,8 +43,4 @@ public class UserMsg extends BaseModel implements Serializable  {
     private Integer isSign;
 
 
-
-
-
-
 }

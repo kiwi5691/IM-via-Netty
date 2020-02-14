@@ -73,7 +73,6 @@ public class UserMsgServiceImpl implements UserMsgService {
     }
 
     @Override
-    @CacheEvict(value = "user-Msg", key = "#id")
     public void delete(Long id) {
         userMsgRepository.findById(id).ifPresent(userMsgRepository::delete);
     }
@@ -85,17 +84,7 @@ public class UserMsgServiceImpl implements UserMsgService {
 
         users.stream().forEach(user -> DtoUtils.copyProperties( users,userDTOList));
 
-        //匿名构造specification
-        Specification<UserMsg> specification =( root,  criteriaQuery,  criteriaBuilder)-> {
-                List<Predicate> predicates = new ArrayList<>();
-                if(userId!=null){
-                    predicates.add(criteriaBuilder.equal(root.get("sendId"),userId));
-                    predicates.add(criteriaBuilder.equal(root.get("acceptId"),userId));
-                }
-                return criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
-        };
-
-        Optional<List<UserMsg>> userMsgs  = Optional.of(userMsgRepository.findAll(specification));
+        Optional<List<UserMsg>> userMsgs  = Optional.of(userMsgRepository.findAll(findMsgByUserId(userId)));
         if(userMsgs.isPresent()&&userFriends.isPresent()){
             //朋友的IDs
             List<Integer> fIds =userFriends.get().stream().map(User::getId).collect(Collectors.toList());
@@ -160,6 +149,30 @@ public class UserMsgServiceImpl implements UserMsgService {
         return userInfoDTOS;
     }
 
+    @Override
+    public List<UserMsg> listUserMsgByFid(Integer userId, Integer fid) {
+
+        Optional<List<UserMsg>> allUserMsgs  = Optional.of(userMsgRepository.findAll(findMsgByUserId(userId)));
+        if(allUserMsgs.isPresent()){
+            return allUserMsgs.get().stream()
+                    .filter(userMsg -> userMsg.getAcceptId().equals(fid)||userMsg.getSendId().equals(fid))
+                    .collect(Collectors.toList());
+        }else {
+            return null;
+        }
+    }
+
+    public Specification<UserMsg> findMsgByUserId(Integer userId){
+        Specification<UserMsg> userMsgSpecification =( root,  criteriaQuery,  criteriaBuilder)-> {
+            List<Predicate> predicates = new ArrayList<>();
+            if(userId!=null){
+                predicates.add(criteriaBuilder.equal(root.get("sendId"),userId));
+                predicates.add(criteriaBuilder.equal(root.get("acceptId"),userId));
+            }
+            return criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
+        };
+        return userMsgSpecification;
+    }
     public List<UserDTO> copyUserDTOList(Set<User> users){
         List<UserDTO> userDTOList = new ArrayList<>();
         if(users.size()==0){

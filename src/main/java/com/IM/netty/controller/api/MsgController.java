@@ -1,10 +1,13 @@
 package com.IM.netty.controller.api;
 
-import com.IM.netty.cache.threadLocal.UserInfoDTOLocalCache;
+import com.IM.netty.cache.apiLocalCache.UserInfoDTOLocalCache;
+import com.IM.netty.cache.apiLocalCache.UserMsgLocalCache;
 import com.IM.netty.entity.User;
 import com.IM.netty.entity.UserGroups;
+import com.IM.netty.entity.UserMsg;
 import com.IM.netty.model.dto.UserDTO;
 import com.IM.netty.model.dto.UserInfoDTO;
+import com.IM.netty.model.dto.WeChatMsg;
 import com.IM.netty.service.UserGroupsService;
 import com.IM.netty.service.UserMsgService;
 import com.IM.netty.utils.JacksonUtil;
@@ -67,5 +70,30 @@ public class MsgController {
             }
         }
         return ResponseUtil.fail(ResponseCode.ZeroFirends, "您还没有私信");
+    }
+
+    @PostMapping("/getFriendMsgs")
+    public Object getFriendMsgs(@RequestBody String body){
+        Integer userId = JacksonUtil.parseInteger(body, "userId");
+        Integer fid = JacksonUtil.parseInteger(body, "fid");
+        Map<String,Object> result = new HashMap<>();
+
+        Optional<List<WeChatMsg>> userMsgs =  Optional.ofNullable(UserMsgLocalCache.get(userId,fid));
+        if(userMsgs.isPresent()){
+            result.put("userMsgs",userMsgs.get());
+            return ResponseUtil.ok(result);
+        }else {
+            Optional<List<UserMsg>> userMsgs1 = Optional.ofNullable(userMsgService.listUserMsgByFid(userId, fid));
+            if(userMsgs1.isPresent()){
+                //todo 构造WeChatMsg
+
+                UserMsgLocalCache.set(userId,fid,userMsgs1.get());
+                result.put("userMsgs",userMsgs1.get());
+                return ResponseUtil.ok(result);
+            }else {
+                return ResponseUtil.fail(ResponseCode.ZeroMSGS, "您们没有聊天记录");
+            }
+        }
+
     }
 }

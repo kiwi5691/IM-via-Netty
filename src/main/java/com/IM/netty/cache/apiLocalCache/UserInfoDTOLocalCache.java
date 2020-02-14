@@ -1,6 +1,5 @@
-package com.IM.netty.cache.threadLocal;
+package com.IM.netty.cache.apiLocalCache;
 
-import com.IM.netty.model.dto.UserDTO;
 import com.IM.netty.model.dto.UserInfoDTO;
 import com.IM.netty.utils.pacDTOs;
 

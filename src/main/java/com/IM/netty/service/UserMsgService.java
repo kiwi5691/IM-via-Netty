@@ -26,4 +26,5 @@ public interface UserMsgService {
     List<UserDTO> getUserMsgDTO(Set<User> users, Integer userId, Optional<Set<User>> userFriends);
     List<UserMsg> getUserMsgById(Integer id);
     List<UserInfoDTO> listUserInfo(List<UserDTO> userDTOList);
+    List<UserMsg> listUserMsgByFid(Integer userId,Integer fid);
 }
