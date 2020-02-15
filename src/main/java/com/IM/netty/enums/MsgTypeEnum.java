@@ -6,9 +6,9 @@ package com.IM.netty.enums;
  */
 public enum MsgTypeEnum {
 
-	text(0, "文字"),
-	image(1, "图片"),
-	audience(2, "音频");
+	text(0, "text"),
+	images(1, "images"),
+	audience(2, "audience");
 
 	public final Integer type;
 	public final String content;
@@ -20,5 +20,5 @@ public enum MsgTypeEnum {
 	
 	public String getType() {
 		return content;
-	}  
+	}
 }

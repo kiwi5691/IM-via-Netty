@@ -6,6 +6,7 @@ import com.IM.netty.model.dto.DataContent;
 import com.IM.netty.service.UserMsgService;
 import com.IM.netty.utils.JsonUtils;
 import com.IM.netty.utils.SpringUtil;
+import com.IM.netty.utils.TypeChecksUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -73,7 +74,8 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 			
 			DataContent dataContentMsg = new DataContent();
 			dataContentMsg.setChatMsg(chatMsg);
-			
+			dataContentMsg.setExtand(TypeChecksUtils.returnType(msgText));
+
 			// 发送消息
 			// 从全局用户Channel关系中获取接受方的channel
 			Channel receiverChannel = UserChannelRel.get(receiverId);

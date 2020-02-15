@@ -10,10 +10,7 @@ import com.IM.netty.model.dto.UserInfoDTO;
 import com.IM.netty.model.dto.WeChatMsg;
 import com.IM.netty.service.UserGroupsService;
 import com.IM.netty.service.UserMsgService;
-import com.IM.netty.utils.JacksonUtil;
-import com.IM.netty.utils.ResponseCode;
-import com.IM.netty.utils.ResponseUtil;
-import com.IM.netty.utils.pacDTOs;
+import com.IM.netty.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,14 +83,13 @@ public class MsgController {
             Optional<List<UserMsg>> userMsgs1 = Optional.ofNullable(userMsgService.listUserMsgByFid(userId, fid));
             if(userMsgs1.isPresent()){
                 //todo 构造WeChatMsg
-
-                UserMsgLocalCache.set(userId,fid,userMsgs1.get());
-                result.put("userMsgs",userMsgs1.get());
+                List<WeChatMsg> weChatMsgs = DtoUtils.copyUseMsg(userMsgs1);
+                UserMsgLocalCache.set(userId,fid,weChatMsgs);
+                result.put("userMsgs",weChatMsgs);
                 return ResponseUtil.ok(result);
             }else {
                 return ResponseUtil.fail(ResponseCode.ZeroMSGS, "您们没有聊天记录");
             }
         }
-
     }
 }

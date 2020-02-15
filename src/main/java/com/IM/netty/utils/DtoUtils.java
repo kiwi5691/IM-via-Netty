@@ -1,11 +1,14 @@
 package com.IM.netty.utils;
 
+import com.IM.netty.entity.UserMsg;
+import com.IM.netty.model.dto.WeChatMsg;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author 76905
@@ -46,4 +49,14 @@ public class DtoUtils {
         return output;
     }
 
+    public static List<WeChatMsg> copyUseMsg(Optional<List<UserMsg>> userMsgList){
+        List<WeChatMsg> weChatMsgs = new ArrayList<>();
+        if(userMsgList.isPresent()){
+            for (UserMsg userMsg: userMsgList.get()) {
+                WeChatMsg weChatMsg = new WeChatMsg(userMsg);
+                weChatMsgs.add(weChatMsg);
+            }
+        }
+        return weChatMsgs;
+    }
 }
