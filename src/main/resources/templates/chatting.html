@@ -183,11 +183,8 @@
                 && CHAT.socket != undefined
                 && CHAT.socket.readyState == WebSocket.OPEN) {
                 CHAT.socket.send(msg);
-            } else {
-                // 重连websocket
-                CHAT.init();
-                setTimeout(CHAT.reChat(msg), "1000");
             }
+
             // 渲染快照列表进行展示
             // loadingChatSnapshot();
         },
@@ -224,7 +221,7 @@
             var myId = chatMsg.receiverId;
             receiveMsg(msg,friendUserId);
 
-            // 接受到消息之后，对消息记录进行签收
+            // 接受到消息之后，对消息记录进行签收 测试页面不需要
             var dataContentSign = new app.DataContent(app.SIGNED, null, chatMsg.msgId);
             CHAT.chat(JSON.stringify(dataContentSign));
         },

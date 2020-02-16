@@ -14,9 +14,12 @@ public class NettyBooter implements ApplicationListener<ContextRefreshedEvent> {
 			try {
 				NettyServer.getInstance().start();
 			} catch (Exception e) {
+				//todo 这里需要再次判断如果报错是否会直接shutdown
 				e.printStackTrace();
+				NettyServer.getInstance().shutdown();
 			}
 		}
+
 	}
 
 }

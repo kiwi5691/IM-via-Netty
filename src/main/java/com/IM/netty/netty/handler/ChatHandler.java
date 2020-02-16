@@ -33,11 +33,11 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 	public static ChannelGroup users =
 			new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
+	// 获取客户端传输过来的消息
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) 
 			throws Exception {
-		System.out.println("read..........");
-		// 获取客户端传输过来的消息
+
 		String content = msg.text();
 		
 		Channel currentChannel = ctx.channel();
@@ -45,38 +45,38 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 		// 1. 获取客户端发来的消息
 		DataContent dataContent = JsonUtils.jsonToPojo(content, DataContent.class);
 		Integer action = dataContent.getAction();
-		log.info("dataContent:"+dataContent.toString());
-		// 2. 判断消息类型，根据不同的类型来处理不同的业务
+		log.info("dataContent:"+dataContent.toString()+"channel:"+currentChannel.toString());
+		// 判断消息类型，根据不同的类型来处理不同的业务
 
 		if (action == MsgActionEnum.CONNECT.type) {
-			// 	2.1  当websocket 第一次open的时候，初始化channel，把用的channel和userid关联起来
+			//初始化channel，把用的channel和userid关联起来
 			String senderId = dataContent.getChatMsg().getSenderId();
 			UserChannelRel.put(senderId, currentChannel);
 			
-			// 测试
-			for (Channel c : users) {
-				System.out.println(c.id().asLongText());
-			}
+			// 测试ChannelGroup
+//			for (Channel c : users) {
+//				System.out.println(c.id().asLongText());
+//			}
 			UserChannelRel.output();
 		} else if (action == MsgActionEnum.CHAT.type) {
-			//  2.2  聊天类型的消息，把聊天记录保存到数据库，同时标记消息的签收状态[未签收]
+			//  聊天类型
 			// 这里的测试页面不对签收和未签收进行判断
 			ChatMsg chatMsg = dataContent.getChatMsg();
 			String msgText = chatMsg.getMsg();
 			String receiverId = chatMsg.getReceiverId();
-			String senderId = chatMsg.getSenderId();
 
 			UserMsgService userMsgService = (UserMsgService) SpringUtil.getBean("userMsgService");
 
-			// 保存消息到数据库，并且标记为 未签收
+			// 保存消息到db，标记->未签收
 			Long msgId = userMsgService.insert(chatMsg);
 			chatMsg.setMsgId(String.valueOf(msgId));
 			
 			DataContent dataContentMsg = new DataContent();
 			dataContentMsg.setChatMsg(chatMsg);
 			dataContentMsg.setExtand(TypeChecksUtils.returnType(msgText));
-
+			UserChannelRel.output();
 			// 发送消息
+
 			// 从全局用户Channel关系中获取接受方的channel
 			Channel receiverChannel = UserChannelRel.get(receiverId);
 			if (receiverChannel == null) {
@@ -95,8 +95,8 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 			}
 			
 		} else if (action == MsgActionEnum.SIGNED.type) {
-			//  2.3  签收消息类型，针对具体的消息进行签收，修改数据库中对应消息的签收状态[已签收]
-//			todo UserService userService = (UserService)SpringUtil.getBean("userServiceImpl");
+
+			UserMsgService userMsgService = (UserMsgService) SpringUtil.getBean("userMsgService");
 			// 扩展字段在signed类型的消息中，代表需要去签收的消息id，逗号间隔
 			String msgIdsStr = dataContent.getExtand();
 			String msgIds[] = msgIdsStr.split(",");
@@ -107,16 +107,13 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 					msgIdList.add(mid);
 				}
 			}
-			
 			System.out.println(msgIdList.toString());
-			
 			if (msgIdList != null && !msgIdList.isEmpty() && msgIdList.size() > 0) {
 				// 批量签收
-//				todo userService.updateMsgSigned(msgIdList);
+				 userMsgService.updateMsgSigned(msgIdList);
 			}
-			
 		} else if (action == MsgActionEnum.KEEPALIVE.type) {
-			//  2.4  心跳类型的消息
+			//心跳类型的消息
 			System.out.println("收到来自channel为[" + currentChannel + "]的心跳包...");
 		}
 	}
@@ -127,7 +124,6 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 	 */
 	@Override
 	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-		System.out.println("add.....");
 		users.add(ctx.channel());
 	}
 
@@ -136,7 +132,6 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 		
 		String channelId = ctx.channel().id().asShortText();
 		System.out.println("客户端被移除，channelId为：" + channelId);
-		
 		// 当触发handlerRemoved，ChannelGroup会自动移除对应客户端的channel
 		users.remove(ctx.channel());
 	}

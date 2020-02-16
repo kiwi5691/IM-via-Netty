@@ -19,6 +19,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -159,6 +160,20 @@ public class UserMsgServiceImpl implements UserMsgService {
                     .collect(Collectors.toList());
         }else {
             return null;
+        }
+    }
+
+    @Override
+    public void updateMsgSigned(List<String> msgIdList) {
+        if(msgIdList.size()==1){
+            Optional<UserMsg> userMsg=userMsgRepository.findById(Long.parseLong(msgIdList.get(0)));
+            userMsg.ifPresent(msg -> {
+                msg.setIsSign(1);
+                userMsgRepository.save(userMsg.get());
+            });
+        }else {
+            //todo 测试
+            userMsgRepository.update(msgIdList.stream().map(Long::parseLong).collect(Collectors.toList()));
         }
     }
 

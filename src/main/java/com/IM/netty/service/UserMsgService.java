@@ -7,6 +7,7 @@ import com.IM.netty.model.dto.UserDTO;
 import com.IM.netty.model.dto.UserInfoDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,4 +28,5 @@ public interface UserMsgService {
     List<UserMsg> getUserMsgById(Integer id);
     List<UserInfoDTO> listUserInfo(List<UserDTO> userDTOList);
     List<UserMsg> listUserMsgByFid(Integer userId,Integer fid);
+    void updateMsgSigned(List<String> msgIdList);
 }

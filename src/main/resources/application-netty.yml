@@ -12,7 +12,13 @@ spring:
   jpa:
     properties:
       hibernate:
-        ddl-auto: update
+#        jdbc:
+        #batch save/update
+#          batch_size: 500
+#          batch_versioned_data: true
+#        order_inserts: true
+#        order_updates: true
+#        ddl-auto: update
         hbm2ddl:
           auto: update
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
