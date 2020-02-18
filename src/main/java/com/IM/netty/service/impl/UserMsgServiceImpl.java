@@ -155,9 +155,16 @@ public class UserMsgServiceImpl implements UserMsgService {
 
         Optional<List<UserMsg>> allUserMsgs  = Optional.of(userMsgRepository.findAll(findMsgByUserId(userId)));
         if(allUserMsgs.isPresent()){
-            return allUserMsgs.get().stream()
+            List<UserMsg> userMsgs =allUserMsgs.get().stream()
                     .filter(userMsg -> userMsg.getAcceptId().equals(fid)||userMsg.getSendId().equals(fid))
                     .collect(Collectors.toList());
+            if(userMsgs.size()!=0){
+                log.info("fu");
+                return userMsgs;
+            }else {
+                log.info("null");
+                return null;
+            }
         }else {
             return null;
         }
@@ -188,6 +195,20 @@ public class UserMsgServiceImpl implements UserMsgService {
             return selfUnReadMsgs;
         }
         return null;
+    }
+
+    @Override
+    public void selfFidsReadMsg(Integer fid, Integer userId) {
+        Optional<List<UserMsg>> userMsgs  = Optional.of(userMsgRepository.findAll(findMsgByUserId(userId)));
+        List<UserMsg> selfUnReadMsgs = new ArrayList<>();
+        if(userMsgs.isPresent()) {
+            selfUnReadMsgs = userMsgs.get().stream().filter(e -> e.getAcceptId().equals(userId) && e.getSendId().equals(fid)).collect(Collectors.toList());
+            List<String> msgIds = new ArrayList<>();
+            if (!CollectionUtils.isEmpty(selfUnReadMsgs)) {
+                msgIds = selfUnReadMsgs.stream().map(e -> String.valueOf(e.getId())).collect(Collectors.toList());
+                this.updateMsgSigned(msgIds);
+            }
+        }
     }
 
     public Specification<UserMsg> findMsgByUserId(Integer userId){

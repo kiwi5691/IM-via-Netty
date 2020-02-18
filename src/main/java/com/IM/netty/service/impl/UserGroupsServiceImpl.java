@@ -9,6 +9,7 @@ import com.IM.netty.service.UserGroupsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.*;
 import java.util.*;
@@ -31,7 +32,11 @@ public class UserGroupsServiceImpl implements UserGroupsService {
             }
         };
         List<UserGroups> userGroups = userGroupsRepository.findAll(specification);
-        return userGroups;
+        if(!CollectionUtils.isEmpty(userGroups)) {
+            return userGroups;
+        }else {
+            return null;
+        }
     }
 
     @Override

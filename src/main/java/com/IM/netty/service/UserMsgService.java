@@ -30,4 +30,5 @@ public interface UserMsgService {
     List<UserMsg> listUserMsgByFid(Integer userId,Integer fid);
     void updateMsgSigned(List<String> msgIdList);
     List<UserMsg> selfUnReadMsg(Integer fid, Integer userId);
+    void selfFidsReadMsg(Integer fid, Integer userId);
 }
