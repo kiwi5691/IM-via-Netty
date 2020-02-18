@@ -96,4 +96,17 @@ public class MsgController {
 
     }
 
+    @PostMapping("/selfUnReadMsg")
+    public Object selfUnReadMsg(@RequestBody String body){
+        Integer userId = JacksonUtil.parseInteger(body, "userId");
+        Integer fid = JacksonUtil.parseInteger(body, "fid");
+        Map<String,Object> result = new HashMap<>();
+        Optional<List<UserMsg>> userMsgs1 = Optional.ofNullable(userMsgService.selfUnReadMsg(fid, userId));
+        if(userMsgs1.isPresent()){
+            List<WeChatMsg> weChatMsgs = DtoUtils.copyUseMsg(userMsgs1);
+            result.put("userMsgs",weChatMsgs);
+            return ResponseUtil.ok(result);
+        }
+        return  ResponseUtil.fail();
+    }
 }

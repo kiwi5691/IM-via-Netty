@@ -4,7 +4,6 @@ public class WsMessage {
 
     private int t; // 消息类型
     private String n; // 用户名称
-    // TODO: 预留房间ID
     private long room_id; // 房间 ID
     private String body; // 消息主体
     private int err; //错误码

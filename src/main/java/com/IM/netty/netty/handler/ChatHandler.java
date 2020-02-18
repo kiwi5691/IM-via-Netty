@@ -91,7 +91,7 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 			// 从全局用户Channel关系中获取接受方的channel
 			Channel receiverChannel = UserChannelRel.get(receiverId);
 			if (receiverChannel == null) {
-				// TODO channel为空代表用户离线，推送消息
+				//  channel为空代表用户离线，推送消息
 			} else {
 				// 当receiverChannel不为空的时候，从ChannelGroup去查找对应的channel是否存在
 				Channel findChannel = users.find(receiverChannel.id());
@@ -101,7 +101,7 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 							new TextWebSocketFrame(
 									JsonUtils.objectToJson(dataContentMsg)));
 				} else {
-					// 用户离线 TODO 推送消息
+					// 用户离线  推送消息
 				}
 			}
 			
@@ -118,8 +118,9 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 					msgIdList.add(mid);
 				}
 			}
-			System.out.println(msgIdList.toString());
 			if (msgIdList != null && !msgIdList.isEmpty() && msgIdList.size() > 0) {
+
+
 				// 批量签收
 				 userMsgService.updateMsgSigned(msgIdList);
 				/*关闭缓存

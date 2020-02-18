@@ -17,7 +17,7 @@ import static com.IM.netty.utils.pacDTOs.pacTimeString;
 @Data
 
 public class WeChatMsg {
-    private Long id;
+    private String id;
 
     private Integer sendId;
 
@@ -36,7 +36,7 @@ public class WeChatMsg {
 
     }
     public WeChatMsg(UserMsg userMsg) {
-        this.id = userMsg.getId();
+        this.id = String.valueOf(userMsg.getId());
         this.sendId = userMsg.getSendId();
         this.acceptId = userMsg.getAcceptId();
         this.msg = userMsg.getMsg();
@@ -48,7 +48,7 @@ public class WeChatMsg {
     public WeChatMsg(DataContent dataContent,Integer isSign) {
         this.type = dataContent.getExtand();
         if(dataContent.getChatMsg()!=null){
-            this.id = Long.parseLong(dataContent.getChatMsg().getMsgId());
+            this.id = dataContent.getChatMsg().getMsgId();
             this.sendId = Integer.parseInt(dataContent.getChatMsg().getSenderId());
             this.acceptId = Integer.parseInt(dataContent.getChatMsg().getReceiverId());
             this.msg = dataContent.getChatMsg().getMsg();

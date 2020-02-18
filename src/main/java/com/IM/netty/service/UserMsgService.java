@@ -29,4 +29,5 @@ public interface UserMsgService {
     List<UserInfoDTO> listUserInfo(List<UserDTO> userDTOList);
     List<UserMsg> listUserMsgByFid(Integer userId,Integer fid);
     void updateMsgSigned(List<String> msgIdList);
+    List<UserMsg> selfUnReadMsg(Integer fid, Integer userId);
 }

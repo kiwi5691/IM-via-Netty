@@ -172,9 +172,22 @@ public class UserMsgServiceImpl implements UserMsgService {
                 userMsgRepository.save(userMsg.get());
             });
         }else {
-            //todo 测试
-            userMsgRepository.update(msgIdList.stream().map(Long::parseLong).collect(Collectors.toList()));
+
+            List<Long> ids =msgIdList.stream().map(Long::parseLong).collect(Collectors.toList());
+
+            userMsgRepository.update(ids);
         }
+    }
+
+    @Override
+    public List<UserMsg> selfUnReadMsg(Integer fid, Integer userId) {
+        Optional<List<UserMsg>> userMsgs  = Optional.of(userMsgRepository.findAll(findMsgByUserId(userId)));
+        List<UserMsg> selfUnReadMsgs = new ArrayList<>();
+        if(userMsgs.isPresent()){
+            selfUnReadMsgs = userMsgs.get().stream().filter(e->e.getAcceptId().equals(fid)&&e.getSendId().equals(userId)).collect(Collectors.toList());
+            return selfUnReadMsgs;
+        }
+        return null;
     }
 
     public Specification<UserMsg> findMsgByUserId(Integer userId){
