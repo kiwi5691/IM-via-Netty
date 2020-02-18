@@ -1,7 +1,5 @@
 package com.IM.netty.controller.api;
 
-import com.IM.netty.cache.apiLocalCache.UserInfoDTOLocalCache;
-import com.IM.netty.cache.apiLocalCache.UserMsgLocalCache;
 import com.IM.netty.entity.User;
 import com.IM.netty.entity.UserGroups;
 import com.IM.netty.entity.UserMsg;
@@ -41,12 +39,14 @@ public class MsgController {
     public Object getGroupList(@RequestBody String body) {
         Map<String, Object> response = new HashMap<>();
         Integer userId = JacksonUtil.parseInteger(body, "userId");
+        /* 缓存关闭
         if(UserInfoDTOLocalCache.get(userId)!=null){
 
             response.put("groupList",UserInfoDTOLocalCache.get(userId) );
             //有好友的情况下
             return ResponseUtil.ok(response);
         }else {
+        */
             Optional<List<UserGroups>> userGroups = Optional.ofNullable(userGroupsService.finAllFriends(userId));
             //构造response
             if (userGroups.isPresent()) {
@@ -55,17 +55,18 @@ public class MsgController {
                 //获取构造userDTOList
                 List<UserDTO> userDTOList = userMsgService.getUserMsgDTO(users.get(), userId, users);
                 Optional<List<UserInfoDTO>> userInfoDTOS = Optional.ofNullable(userMsgService.listUserInfo(userDTOList));
-                //这里走concurrentHashMap存储
                 if (userInfoDTOS.isPresent()) {
+                    /*这里走concurrentHashMap存储
                     UserInfoDTOLocalCache.set(userId,pacDTOs.sortByCreateTime(pacDTOs.pacListUserInfoDTO(userInfoDTOS.get())));
-                    response.put("groupList",UserInfoDTOLocalCache.get(userId));
+                     */
+                    response.put("groupList",pacDTOs.sortByCreateTime(pacDTOs.pacListUserInfoDTO(userInfoDTOS.get())));
                     //有好友的情况下
                     return ResponseUtil.ok(response);
                 }
                 //没私信的情况下
                 return ResponseUtil.fail(ResponseCode.ZeroFirends, "您还没有私信");
             }
-        }
+//        }
         return ResponseUtil.fail(ResponseCode.ZeroFirends, "您还没有私信");
     }
 
@@ -74,22 +75,25 @@ public class MsgController {
         Integer userId = JacksonUtil.parseInteger(body, "userId");
         Integer fid = JacksonUtil.parseInteger(body, "fid");
         Map<String,Object> result = new HashMap<>();
-
+/*缓存关闭
         Optional<List<WeChatMsg>> userMsgs =  Optional.ofNullable(UserMsgLocalCache.get(userId,fid));
         if(userMsgs.isPresent()){
             result.put("userMsgs",userMsgs.get());
             return ResponseUtil.ok(result);
         }else {
+ */
             Optional<List<UserMsg>> userMsgs1 = Optional.ofNullable(userMsgService.listUserMsgByFid(userId, fid));
             if(userMsgs1.isPresent()){
-                //todo 构造WeChatMsg
                 List<WeChatMsg> weChatMsgs = DtoUtils.copyUseMsg(userMsgs1);
+               /*
                 UserMsgLocalCache.set(userId,fid,weChatMsgs);
+                */
                 result.put("userMsgs",weChatMsgs);
                 return ResponseUtil.ok(result);
             }else {
                 return ResponseUtil.fail(ResponseCode.ZeroMSGS, "您们没有聊天记录");
             }
-        }
+
     }
+
 }

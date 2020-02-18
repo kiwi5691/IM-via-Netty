@@ -2,10 +2,14 @@ package com.IM.netty.controller.view;
 
 import com.IM.netty.cache.UserStatusCacheMap;
 import com.IM.netty.entity.User;
+import com.IM.netty.entity.UserMsg;
 import com.IM.netty.model.dto.UserDTO;
+import com.IM.netty.model.dto.WeChatMsg;
 import com.IM.netty.service.UserGroupsService;
 import com.IM.netty.service.UserMsgService;
 import com.IM.netty.service.UserService;
+import com.IM.netty.service.constructWeChatMsgApi;
+import com.IM.netty.utils.DtoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpSession;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class ChatController {
@@ -50,6 +55,8 @@ public class ChatController {
         if(optionalUsers.isPresent()) {
             Map<String,Object> map = getFirstOne(optionalUsers.get());
             List<UserDTO> userDTOList = userMsgService.getUserMsgDTO(optionalUsers.get(),Integer.parseInt(id.toString()),optionalUsers);
+            //构造api存储
+            constructWeChatMsgApi.constructWeChatMsgApi(Integer.parseInt(id.toString()),fid);
             model.addAttribute("users", userDTOList);
 
             model.addAttribute("fId", fid);
@@ -75,6 +82,7 @@ public class ChatController {
         if(optionalUsers.isPresent()) {
             Map<String,Object> map = getFirstOne(optionalUsers.get());
             List<UserDTO> userDTOList = userMsgService.getUserMsgDTO(optionalUsers.get(),Integer.parseInt(id.toString()),optionalUsers);
+            constructWeChatMsgApi.constructWeChatMsgApi(Integer.parseInt(id.toString()),optionalUsers);
             model.addAttribute("users", userDTOList);
             model.addAttribute("fNickName", map.get("fNickName"));
             model.addAttribute("fId", map.get("fId"));
@@ -91,4 +99,6 @@ public class ChatController {
         map.put("fNickName",userSet.iterator().next().getNickname());
         return map;
     }
+
+
 }

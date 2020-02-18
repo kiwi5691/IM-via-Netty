@@ -1,8 +1,11 @@
 package com.IM.netty.netty.handler;
 
+import com.IM.netty.entity.UserMsg;
 import com.IM.netty.enums.MsgActionEnum;
+import com.IM.netty.enums.MsgSignFlagEnum;
 import com.IM.netty.model.dto.ChatMsg;
 import com.IM.netty.model.dto.DataContent;
+import com.IM.netty.model.dto.WeChatMsg;
 import com.IM.netty.service.UserMsgService;
 import com.IM.netty.utils.JsonUtils;
 import com.IM.netty.utils.SpringUtil;
@@ -25,7 +28,6 @@ import java.util.List;
 /**
  * 
  * @Description: 处理消息的handler
- * TextWebSocketFrame： 在netty中，是用于为websocket专门处理文本的对象，frame是消息的载体
  */
 @Slf4j
 public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
@@ -66,11 +68,20 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 			String receiverId = chatMsg.getReceiverId();
 
 			UserMsgService userMsgService = (UserMsgService) SpringUtil.getBean("userMsgService");
-
 			// 保存消息到db，标记->未签收
 			Long msgId = userMsgService.insert(chatMsg);
 			chatMsg.setMsgId(String.valueOf(msgId));
-			
+
+			/*小程序初始页面 ，这里关闭了缓存
+			UserInfoDTOLocalCache.setNewMessage(Integer.parseInt(receiverId),Integer.parseInt(chatMsg.getSenderId()),msgText);
+			//这里其实对于channel中没有userId之分
+			UserInfoDTOLocalCache.setNewMessage(Integer.parseInt(chatMsg.getSenderId()),Integer.parseInt(receiverId),msgText);
+
+			WeChatMsg weChatMsg = new WeChatMsg(dataContent, MsgSignFlagEnum.signed.type);
+			UserMsgLocalCache.add(Integer.parseInt(receiverId),Integer.parseInt(chatMsg.getSenderId()),weChatMsg);
+			UserMsgLocalCache.add(Integer.parseInt(chatMsg.getSenderId()),Integer.parseInt(receiverId),weChatMsg);
+			*/
+
 			DataContent dataContentMsg = new DataContent();
 			dataContentMsg.setChatMsg(chatMsg);
 			dataContentMsg.setExtand(TypeChecksUtils.returnType(msgText));
@@ -111,7 +122,12 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 			if (msgIdList != null && !msgIdList.isEmpty() && msgIdList.size() > 0) {
 				// 批量签收
 				 userMsgService.updateMsgSigned(msgIdList);
+				/*关闭缓存
+				 UserMsgLocalCache.updateSign(msgIdList);
+ 				*/
 			}
+
+
 		} else if (action == MsgActionEnum.KEEPALIVE.type) {
 			//心跳类型的消息
 			System.out.println("收到来自channel为[" + currentChannel + "]的心跳包...");

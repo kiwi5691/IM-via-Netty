@@ -27,10 +27,14 @@ public class pacDTOs {
         return DateTimeUtil.getDateTimeDisplayString(DateTimeUtil.DateToLocalDateTime(date),DateTimeUtil.WORDSWITHPM_AM);
     }
     public static String pacMsg(String msg){
+        if(msg.length()>=10){
         StringBuilder builder = new StringBuilder();
         builder.append(msg.substring(0,9));
         builder.append("...");
         return builder.toString();
+        }else {
+            return msg;
+        }
     }
 
     public static List<UserInfoDTO> sortByCreateTime(List<UserInfoDTO> list){

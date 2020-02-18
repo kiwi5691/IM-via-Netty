@@ -45,4 +45,16 @@ public class WeChatMsg {
 
         this.date = pacDTOs.pacTimeString(userMsg.getCreateTime());
     }
+    public WeChatMsg(DataContent dataContent,Integer isSign) {
+        this.type = dataContent.getExtand();
+        if(dataContent.getChatMsg()!=null){
+            this.id = Long.parseLong(dataContent.getChatMsg().getMsgId());
+            this.sendId = Integer.parseInt(dataContent.getChatMsg().getSenderId());
+            this.acceptId = Integer.parseInt(dataContent.getChatMsg().getReceiverId());
+            this.msg = dataContent.getChatMsg().getMsg();
+            this.isSign = isSign;
+            this.date = pacDTOs.pacTimeString(new Date());
+        }
+
+    }
 }

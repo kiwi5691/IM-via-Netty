@@ -9,6 +9,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ *
+ * @Description: 测试页的缓存
+ */
 public class UserStatusCacheMap {
     // 好友列表 ID，用户
     private final static Map<Integer,Set<User>> friendLists = new ConcurrentHashMap<>();
