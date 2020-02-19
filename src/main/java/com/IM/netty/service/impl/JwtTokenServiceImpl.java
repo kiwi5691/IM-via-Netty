@@ -6,6 +6,7 @@ import com.IM.netty.service.JwtTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service("jwtTokenService")
@@ -18,6 +19,12 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     public JwtToken findById(Integer id) {
         Optional<JwtToken> jwtToken =jwtTokenDao.findById(id);
         return jwtToken.orElse(null);
+    }
+
+    @Override
+    public Iterable<JwtToken> listAll() {
+        Iterable<JwtToken> jwtTokens=jwtTokenDao.findAll();
+        return jwtTokens;
     }
 }
 

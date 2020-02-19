@@ -137,10 +137,14 @@ public class ResponseUtil {
         return fail(401, "内容错误");
     }
 
+    public static Object unSecurityVerify() {
+        return fail(ResponseCode.UNSECURITYVERIFY.getCode(),ResponseCode.UNSECURITYVERIFY.getMessage());
+    }
+
+
     public static Object badArgumentValue() {
         return fail(402, "内容错误");
     }
-
     public static Object unlogin() {
         return fail(501, "请登录");
     }

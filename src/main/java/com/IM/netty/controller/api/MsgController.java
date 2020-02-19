@@ -1,5 +1,6 @@
 package com.IM.netty.controller.api;
 
+import com.IM.netty.annotation.SecurityVerify;
 import com.IM.netty.entity.User;
 import com.IM.netty.entity.UserGroups;
 import com.IM.netty.entity.UserMsg;
@@ -24,6 +25,8 @@ public class MsgController {
     private UserMsgService userMsgService;
     @Autowired
     private UserGroupsService userGroupsService;
+
+    @SecurityVerify
     @PostMapping("/getUnReadMsgList")
     public Object getUnReadMsgList(String acceptUserId) {
         // 0. userId 判断不能为空
@@ -35,6 +38,7 @@ public class MsgController {
         return ResponseUtil.ok(result);
     }
 
+    @SecurityVerify
     @PostMapping("/getUserList")
     public Object getGroupList(@RequestBody String body) {
         Map<String, Object> response = new HashMap<>();
@@ -64,12 +68,13 @@ public class MsgController {
                     return ResponseUtil.ok(response);
                 }
                 //没私信的情况下
-                return ResponseUtil.fail(ResponseCode.ZeroFirends, "您还没有私信");
+                return ResponseUtil.fail(ResponseCode.ZEROFIRENDS.getCode(), ResponseCode.ZEROFIRENDS.getMessage());
             }
 //        }
-        return ResponseUtil.fail(ResponseCode.ZeroFirends, "您还没有私信");
+        return ResponseUtil.fail(ResponseCode.ZEROFIRENDS.getCode(), ResponseCode.ZEROFIRENDS.getMessage());
     }
 
+    @SecurityVerify
     @PostMapping("/getFriendMsgs")
     public Object getFriendMsgs(@RequestBody String body){
         Integer userId = JacksonUtil.parseInteger(body, "userId");
@@ -91,11 +96,13 @@ public class MsgController {
                 result.put("userMsgs",weChatMsgs);
                 return ResponseUtil.ok(result);
             }else {
-                return ResponseUtil.fail(ResponseCode.ZeroMSGS, "您们没有聊天记录");
+
+                return ResponseUtil.fail(ResponseCode.ZEROMSGS.getCode(), ResponseCode.ZEROMSGS.getMessage());
             }
 
     }
 
+    @SecurityVerify
     @PostMapping("/selfUnReadMsg")
     public Object selfUnReadMsg(@RequestBody String body){
         Integer userId = JacksonUtil.parseInteger(body, "userId");

@@ -1,4 +1,4 @@
-package com.IM.netty.config;
+package com.IM.netty.exception;
 
 import com.IM.netty.utils.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,11 @@ import java.util.Set;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    
+    @ExceptionHandler(SellerAuthorizeException.class)
+    @ResponseBody
+    public Object handlerSellerException(SellerAuthorizeException e) {
+        return ResponseUtil.unSecurityVerify();
+    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseBody
