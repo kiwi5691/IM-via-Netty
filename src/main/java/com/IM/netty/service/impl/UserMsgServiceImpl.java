@@ -159,7 +159,6 @@ public class UserMsgServiceImpl implements UserMsgService {
                     .filter(userMsg -> userMsg.getAcceptId().equals(fid)||userMsg.getSendId().equals(fid))
                     .collect(Collectors.toList());
             if(userMsgs.size()!=0){
-                log.info("fu");
                 return userMsgs;
             }else {
                 log.info("null");

@@ -7,7 +7,7 @@ package com.IM.netty.enums;
 public enum MsgTypeEnum {
 
 	text(0, "text"),
-	images(1, "images"),
+	images(1, "image"),
 	audience(2, "audience");
 
 	public final Integer type;

@@ -22,7 +22,12 @@ public class TypeChecksUtils {
     }
 
     public static boolean isImage(String file){
-        return imgs.contains(file);
+        for (String img: imgs) {
+            if(file.contains(img)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public static String returnType(String file){
