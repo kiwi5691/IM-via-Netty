@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
+@RequestMapping("msg/")
 public class LoginController {
 
     @Autowired

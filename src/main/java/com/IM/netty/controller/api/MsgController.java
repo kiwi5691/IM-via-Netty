@@ -19,7 +19,7 @@ import java.util.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/wx")
+@RequestMapping("msg/wx")
 public class MsgController {
     @Autowired
     private UserMsgService userMsgService;

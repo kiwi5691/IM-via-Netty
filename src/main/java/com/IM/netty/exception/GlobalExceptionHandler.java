@@ -22,6 +22,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SellerAuthorizeException.class)
     @ResponseBody
     public Object handlerSellerException(SellerAuthorizeException e) {
+        log.error(e.getMessage(), e);
         return ResponseUtil.unSecurityVerify();
     }
 

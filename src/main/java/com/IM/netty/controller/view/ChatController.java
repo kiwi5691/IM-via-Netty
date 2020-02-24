@@ -13,19 +13,21 @@ import com.IM.netty.utils.DtoUtils;
 import com.IM.netty.utils.JacksonUtil;
 import com.IM.netty.utils.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
+@RequestMapping("msg/")
 public class ChatController {
+    @Value("${WSURL}")
+    private String wxUrl;
+
     @Autowired
     private UserMsgService userMsgService;
     @Autowired
@@ -57,6 +59,7 @@ public class ChatController {
     public String toChatDetail(@PathVariable Integer fid,Model model){
         Object id = session.getAttribute("currentId");
         Optional<Set<User>> optionalUsers = Optional.ofNullable(UserStatusCacheMap.getFriendLists(Integer.parseInt(id.toString())));
+        model.addAttribute("wxUrl",wxUrl);
         if(optionalUsers.isPresent()) {
             Map<String,Object> map = getFirstOne(optionalUsers.get());
             List<UserDTO> userDTOList = userMsgService.getUserMsgDTO(optionalUsers.get(),Integer.parseInt(id.toString()),optionalUsers);
@@ -94,6 +97,8 @@ public class ChatController {
     @GetMapping({"/chatting","/chatting.html"})
     public String getChatting(Model model) {
         Object id = session.getAttribute("currentId");
+        model.addAttribute("wxUrl",wxUrl);
+
         if(id==null){
             model.addAttribute("hide",true);
             return "redirect:/login";

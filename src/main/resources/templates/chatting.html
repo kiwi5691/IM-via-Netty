@@ -166,7 +166,8 @@
                     return false;
                 }
 
-                CHAT.socket = new WebSocket("ws://localhost:8088/ws");
+                var url =[[${wxUrl}]];
+                CHAT.socket = new WebSocket(url);
                 CHAT.socket.onopen = CHAT.wsopen,
                     CHAT.socket.onclose = CHAT.wsclose,
                     CHAT.socket.onerror = CHAT.wserror,
