@@ -1,6 +1,7 @@
 package com.IM.netty.service.impl;
 
 import com.IM.netty.cache.UserStatusCacheMap;
+import com.IM.netty.cache.apiLocalCache.IsSignThreadLocal;
 import com.IM.netty.dao.UserMsgRepository;
 import com.IM.netty.entity.User;
 import com.IM.netty.entity.UserGroups;
@@ -129,6 +130,7 @@ public class UserMsgServiceImpl implements UserMsgService {
     @Override
     public List<UserInfoDTO> listUserInfo(List<UserDTO> userDTOList) {
         List<UserInfoDTO> userInfoDTOS = new ArrayList<>();
+        List<UserMsg> userMsgs = new ArrayList<>();
         userDTOList.removeIf(userDTO->userDTO.getUserMsgs()==null);
         for(UserDTO userDTO:userDTOList){
             //取出最新的userMsg
@@ -138,12 +140,13 @@ public class UserMsgServiceImpl implements UserMsgService {
                 userInfoDTO.setAvatar(userDTO.getAvatar());
                 userInfoDTO.setId(userDTO.getId());
                 userInfoDTO.setNickname(userDTO.getNickname());
-                userInfoDTO.setLastChatTime(date.get().getCreateTime());
-                userInfoDTO.setLastChatWords(date.get().getMsg());
+                userInfoDTO.setLastChatTime(value.getCreateTime());
+                userInfoDTO.setLastChatWords(value.getMsg());
                 userInfoDTOS.add(userInfoDTO);
+                userMsgs.add(value);
             });
-
         }
+        IsSignThreadLocal.set(userMsgs);
         if(CollectionUtils.isEmpty(userInfoDTOS)){
             return null;
         }

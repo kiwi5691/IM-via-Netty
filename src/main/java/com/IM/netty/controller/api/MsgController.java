@@ -1,6 +1,7 @@
 package com.IM.netty.controller.api;
 
 import com.IM.netty.annotation.SecurityVerify;
+import com.IM.netty.cache.apiLocalCache.IsSignThreadLocal;
 import com.IM.netty.entity.User;
 import com.IM.netty.entity.UserGroups;
 import com.IM.netty.entity.UserMsg;
@@ -64,6 +65,8 @@ public class MsgController {
                     UserInfoDTOLocalCache.set(userId,pacDTOs.sortByCreateTime(pacDTOs.pacListUserInfoDTO(userInfoDTOS.get())));
                      */
                     response.put("groupList",pacDTOs.sortByCreateTime(pacDTOs.pacListUserInfoDTO(userInfoDTOS.get())));
+                    //小程序端是否提醒 true/false
+                    response.put("isRemain", IsSignThreadLocal.checkIsRemain(userId));
                     //有好友的情况下
                     return ResponseUtil.ok(response);
                 }

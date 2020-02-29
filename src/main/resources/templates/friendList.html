@@ -6,8 +6,8 @@
 <title>好友列表</title>
 
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600" rel="stylesheet">
-<link rel="stylesheet" href="css/reset.min.css">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="/css/reset.min.css">
+<link rel="stylesheet" href="/css/style.css">
 
 </head>
 <body>
@@ -19,8 +19,8 @@
         <div class="left">
             <div class="top">
                 <div >
-                    <button type="button" onclick="window.location.href='/friends'" class="search">好友列表</button>
-                    <button type="button" onclick="window.location.href='/chatting'" class="search">聊天列表</button>
+                    <button type="button" onclick="window.location.href='/msg/friends'" class="search">好友列表</button>
+                    <button type="button" onclick="window.location.href='/msg/chatting'" class="search">聊天列表</button>
                 </div>
             </div>
             <ul  class="people">
@@ -46,7 +46,7 @@
 
 <script  th:inline="javascript">
     function toChat(f) {
-        self.location="/toChatDetail/"+f;
+        self.location="/msg/toChatDetail/"+f;
     }
 
 </script>

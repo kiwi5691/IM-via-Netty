@@ -1,12 +1,15 @@
 package com.IM.netty.utils;
 
+import com.IM.netty.entity.UserMsg;
+import com.IM.netty.model.dto.UserDTO;
 import com.IM.netty.model.dto.UserInfoDTO;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class pacDTOs {
     public static List<UserInfoDTO> pacListUserInfoDTO(List<UserInfoDTO> userInfoDTOS){
         userInfoDTOS.forEach(userInfoDTO1 -> {
@@ -41,4 +44,5 @@ public class pacDTOs {
         //根据时间从小到大排序
         return list.stream().sorted(Comparator.comparing(UserInfoDTO::getLastChatTime).reversed()).collect(Collectors.toList());
     }
+
 }
